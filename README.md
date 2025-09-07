@@ -81,7 +81,7 @@ A modern crowdfunding platform built with Django that enables users to create an
 
 1. Clone the repository
 ```bash
-git clone https://github.com/manjurulhoque/fundly.git
+git clone 
 cd fundly
 ```
 
@@ -116,24 +116,4 @@ python manage.py generate_sample_data
 python manage.py runserver
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/improvement`)
-3. Make your changes
-4. Commit your changes (`git commit -am 'Add new feature'`)
-5. Push to the branch (`git push origin feature/improvement`)
-6. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Bootstrap for the frontend framework
-- Django for the amazing web framework
-- All contributors who have helped with the project
-
-Built with ❤️ for better healthcare access
 
