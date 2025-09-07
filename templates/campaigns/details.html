@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load campaign_tags %}
+
+{% block content %}
+    <div class="jumbotron md index-header jumbotron_set jumbotron-cover">
+        <div class="container wrap-jumbotron position-relative">
+            <h1 class="title-site">{{ campaign.title }}</h1>
+        </div>
+    </div>
+
+    <div class="container margin-bottom-40 padding-top-40">
+        <!-- Col MD -->
+        <div class="col-md-8 margin-bottom-20">
+            <div class="text-center margin-bottom-20">
+                <img class="img-responsive img-rounded" style="display: inline-block;" src="{{ campaign.image_url }}"/>
+            </div>
+
+            <h1 class="font-default title-image none-overflow margin-bottom-20">{{ campaign.title }}</h1>
+
+            <hr/>
+
+            <!-- Social Share Buttons -->
+            <div class="row margin-bottom-30">
+                <div class="col-md-3">
+                    <a class="btn btn-block btn-facebook" href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|urlencode }}" target="_blank">
+                        <i class="fa fa-facebook myicon-right"></i> Share
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-twitter btn-block" href="https://twitter.com/intent/tweet?url={{ share_url|urlencode }}&text={{ campaign.title|urlencode }}" target="_blank">
+                        <i class="fa fa-twitter myicon-right"></i> Tweet
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-default btn-block margin-bottom-5" href="mailto:?subject={{ campaign.title|urlencode }}&body={{ share_url|urlencode }}">
+                        <i class="fa fa-envelope myicon-right"></i> Email
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a class="btn btn-default btn-block" data-toggle="modal" data-target="#embedModal">
+                        <i class="fa fa-code myicon-right"></i> Embed
+                    </a>
+                </div>
+            </div>
+
+            <!-- Campaign Tabs -->
+            <ul class="nav nav-tabs nav-justified margin-bottom-20">
+                <li class="active">
+                    <a href="#desc" role="tab" data-toggle="tab" class="font-default">
+                        <strong>The Story</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="#donations" role="tab" data-toggle="tab" class="font-default">
+                        <strong>Donations</strong> 
+                        <span class="badge update-ico">{{ total_donors }}</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Story Tab -->
+                <div role="tabpanel" class="tab-pane fade in active description wordBreak" id="desc">
+                    {{ campaign.description|safe }}
+                </div>
+
+                <!-- Donations Tab -->
+                <div role="tabpanel" class="tab-pane fade in description wordBreak" id="donations">
+                    {% if not donations %}
+                        <div class="text-center">
+                            <i class="ion ion-cash ico-no-result"></i>
+                            <p>No donations yet. Be the first to donate!</p>
+                        </div>
+                    {% else %}
+                        <ul class="list-group" id="listDonations">
+                            {% for donation in donations %}
+                                <li class="list-group-item">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <img class="media-object img-circle imgDonations" 
+                                                 src="{{ donation.avatar }}" 
+                                                 width="40" height="40">
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading">{{ donation.name }}</h4>
+                                            <span class="btn-block recent-donation-amount font-default">
+                                                ${{ donation.donation|intcomma }}
+                                            </span>
+                                            {% if donation.comment %}
+                                                <p class="margin-bottom-5">{{ donation.comment }}</p>
+                                            {% endif %}
+                                            <small class="btn-block timeAgo text-muted">
+                                                {{ donation.date|date }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Creator Info -->
+            <div class="panel panel-default panel-transparent">
+                <div class="panel-body">
+                    <div class="media none-overflow">
+                        <div class="media-center margin-bottom-5">
+                            <img class="img-circle center-block" 
+                                 src="{{ campaign.user.avatar_url }}" 
+                                 width="60" height="60">
+                        </div>
+                        <div class="media-body text-center">
+                            <h4 class="media-heading">
+                                {{ campaign.user.get_full_name }}
+                                <a href="#" title="Contact the Organizer" data-toggle="modal" data-target="#sendEmail">
+                                    <i class="fa fa-envelope myicon-right"></i>
+                                </a>
+                            </h4>
+                            <small class="media-heading text-muted btn-block margin-zero">
+                                Created {{ campaign.date|date }}
+                            </small>
+                            <small class="media-heading text-muted btn-block">
+                                <i class="fa fa-map-marker myicon-right"></i> {{ campaign.location }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donate Button -->
+            <div class="btn-group btn-block margin-bottom-20">
+                <a href="{% url 'campaign:campaign-donation' campaign.id %}" 
+                   class="btn btn-main btn-lg btn-block custom-rounded">
+                    Donate Now
+                </a>
+            </div>
+
+            <!-- Campaign Stats -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3 class="btn-block margin-zero" style="line-height: inherit;">
+                        <strong class="font-default">${{ total_raised|intcomma }}</strong>
+                        <small>of ${{ campaign.goal|intcomma }} goal</small>
+                    </h3>
+
+                    <div class="progress margin-top-10 margin-bottom-10">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ progress_percentage }}%"
+                             aria-valuenow="{{ progress_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+
+                    <small class="btn-block margin-bottom-10 text-muted">
+                        {{ progress_percentage|floatformat:0 }}% Raised by {{ total_donors }} Donation{{ total_donors|pluralize }}
+                    </small>
+
+                    <small class="btn-block">
+                        <a href="{% url 'core:campaigns-by-category' campaign.category.id %}">
+                            <i class="icon-tag myicon-right"></i> {{ campaign.category.name }}
+                        </a>
+                    </small>
+                </div>
+            </div>
+
+            <!-- Time Remaining -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4 class="margin-zero text-center">
+                        <i class="fa fa-clock-o myicon-right"></i>
+                        {% if campaign.days_remaining > 0 %}
+                            <strong>{{ campaign.days_remaining }} day{{ campaign.days_remaining|pluralize }} left</strong>
+                        {% else %}
+                            <strong class="text-danger">Campaign ended</strong>
+                        {% endif %}
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

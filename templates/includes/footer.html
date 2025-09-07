@@ -1,0 +1,70 @@
+{% load static %}
+
+<footer class="footer-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'core:home' %}">
+                    <img src="{% static 'img/logo.png' %}" style="height: 80px; width: 80px"/>
+                </a>
+                <p class="margin-tp-xs">BetterTogether is a crowdfunding platform that brings creative projects to life. 
+                    Whether you're an entrepreneur, artist, nonprofit, or dreamer with a cause, we provide the tools 
+                    and support you need to share your story, attract supporters, and make your initiative a reality. 
+                    Join our community of changemakers and start your campaign today.</p>
+
+                <ul class="list-inline">
+                    <li><a href="https://www.twitter.com/bettertogether" class="ico-social"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="https://www.facebook.com/bettertogether" class="ico-social"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="https://www.instagram.com/bettertogether" class="ico-social"><i class="fa fa-instagram"></i></a></li>
+                    <li><a href="https://www.linkedin.com/company/bettertogether" class="ico-social"><i class="fa fa-linkedin"></i></a></li>
+                </ul>
+            </div><!-- ./End col-md-* -->
+
+            <div class="col-md-3 margin-tp-xs">
+                <h4 class="margin-top-zero">About</h4>
+                <ul class="list-unstyled">
+                    <li><a class="link-footer" href="#">Terms of Service</a></li>
+                    <li><a class="link-footer" href="#">Privacy Policy</a></li>
+                    <li><a class="link-footer" href="#">About BetterTogether</a></li>
+                    <li><a class="link-footer" href="#">Help Center</a></li>
+                    <li><a class="link-footer" href="#">Success Stories</a></li>
+                    <li><a class="link-footer" href="#">Campaign Guidelines</a></li>
+                </ul>
+            </div><!-- ./End col-md-* -->
+
+            <div class="col-md-3 margin-tp-xs">
+                <h4 class="margin-top-zero">Categories</h4>
+                <ul class="list-unstyled">
+                    {% for category in categories %}
+                        <li><a class="link-footer" href="{% url 'core:campaigns-by-category' category.id %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                    <li><a class="link-footer" href="{% url 'core:categories' %}">
+                        <strong>View all <i class="fa fa-long-arrow-right"></i></strong>
+                    </a></li>
+                </ul>
+            </div><!-- ./End col-md-* -->
+
+            <div class="col-md-2 margin-tp-xs">
+                <h4 class="margin-top-zero">Links</h4>
+                <ul class="list-unstyled">
+                    <li>
+                        <a class="link-footer" href="#">Campaigns</a>
+                    </li>
+                    <li>
+                        <a class="link-footer" href="{% url 'accounts:login' %}">Login</a>
+                    </li>
+                </ul>
+            </div><!-- ./End col-md-* -->
+        </div><!-- ./End Row -->
+    </div><!-- ./End Container -->
+</footer><!-- ***** Footer ***** -->
+
+<footer class="subfooter">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center padding-top-20">
+                <p>&copy; {% now "Y" %} BetterTogether | Empowering Dreams Through Crowdfunding | Design and Developed by TUBA.</p>
+            </div><!-- ./End col-md-* -->
+        </div>
+    </div>
+</footer>

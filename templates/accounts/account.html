@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="jumbotron md index-header jumbotron_set jumbotron-cover">
+        <div class="container wrap-jumbotron position-relative">
+            <h2 class="title-site">Account Settings</h2>
+        </div>
+    </div>
+
+    <div class="container margin-bottom-40">
+
+        <!-- Col MD -->
+        <div class="col-md-8 margin-bottom-20">
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger alert-dismissable">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>{{ field.name }} {{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            <form action="" method="post" name="form">
+
+                {% csrf_token %}
+
+                <div class="form-group has-feedback">
+                    <label class="font-default">Full Name</label>
+                    <input type="text" class="form-control login-field custom-rounded" value="{{ user.username }}"
+                           name="username" placeholder="Enter Username"
+                           title="username" autocomplete="off" required>
+                </div>
+
+                <div class="form-group has-feedback">
+                    <label class="font-default">Country</label>
+                    <select name="country" class="form-control" required>
+                        <option value="">Select your country</option>
+                        {% for country in countries %}
+                            <option {% if user.country_id == country.id %} selected="selected" {% endif %}
+                                    value="{{ country.id }}">
+                                {{ country.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" id="buttonSubmit" class="btn btn-block btn-lg btn-main custom-rounded">Save
+                    Changes
+                </button>
+
+            </form><!-- ***** END FORM ***** -->
+
+        </div><!-- /COL MD -->
+
+        <div class="col-md-4">
+            {% include 'includes/navbar-edit.html' %}
+        </div>
+
+    </div><!-- container -->
+
+{% endblock %}

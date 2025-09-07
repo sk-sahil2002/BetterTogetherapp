@@ -1,0 +1,128 @@
+{% load static %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+
+    <!-- Brand & Toggle -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
+        <img src="{% static 'img/logo.png' %}" alt="Logo" class="img-circle" style="width: 40px; height: 40px; display:inline-block; margin-right:8px;">
+        <span style="font-weight:600;">Better Together</span>
+      </a>
+    </div>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="nav navbar-nav navbar-right">
+
+        <!-- Search -->
+        <li>
+          <a href="#search">
+            <i class="glyphicon glyphicon-search"></i> Search
+          </a>
+        </li>
+
+        <!-- Campaigns -->
+        <li class="{% if request.resolver_match.url_name == 'campaign-list' %}active{% endif %}">
+          <a href="{% url 'campaign:campaign-list' %}">Campaigns</a>
+        </li>
+
+        <!-- Categories Dropdown -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Categories <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {% for category in categories %}
+              <li>
+                <a href="{% url "core:campaigns-by-category" category.id %}">
+                  {{ category.name }}
+                </a>
+              </li>
+            {% endfor %}
+            <li role="separator" class="divider"></li>
+            <li>
+              <a href="{% url 'core:categories' %}">
+                <strong>View all →</strong>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- How it works -->
+        <li>
+          <a href="{% url 'core:how-it-works' %}">How it works</a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <!-- User Dropdown -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="{% static 'img/avatar.png' %}" alt="User"
+                   class="img-circle" width="22" height="22" style="margin-right:6px;">
+              My Profile <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              {% if request.user.is_superuser %}
+                <li>
+                  <a href="{% url 'admin_dashboard:home' %}">
+                    <i class="glyphicon glyphicon-dashboard"></i> Admin Dashboard
+                  </a>
+                </li>
+              {% endif %}
+              <li>
+                <a href="{% url 'dashboard:home' %}">
+                  <i class="glyphicon glyphicon-user"></i> My Dashboard
+                </a>
+              </li>
+              <li>
+                <a href="#"><i class="glyphicon glyphicon-heart"></i> Likes</a>
+              </li>
+              <li>
+                <a href="{% url 'accounts:account' %}">
+                  <i class="glyphicon glyphicon-cog"></i> Account Settings
+                </a>
+              </li>
+              <li role="separator" class="divider"></li>
+              <li>
+                <a href="{% url 'accounts:logout' %}" class="text-danger">
+                  <i class="glyphicon glyphicon-log-out"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Create Campaign Button -->
+          <li>
+            <a href="{% url 'campaign:campaign-create' %}" class="btn btn-success navbar-btn" style="border-radius:20px; padding:6px 16px;">
+              <i class="glyphicon glyphicon-edit"></i> Create Campaign
+            </a>
+          </li>
+        {% else %}
+          <!-- Login & Signup -->
+          <li><a href="{% url 'accounts:login' %}">Login</a></li>
+          <li>
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary navbar-btn" style="border-radius:20px; padding:6px 16px;">
+              <i class="glyphicon glyphicon-user"></i> Sign up
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Search Overlay -->
+<div id="search" class="search-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:1050; text-align:center; padding-top:120px;">
+  <button type="button" class="close" style="position:absolute; top:20px; right:30px; font-size:40px; color:#fff;">&times;</button>
+  <form action="http://127.0.0.1:8001/search" method="get" class="form-inline">
+    <input type="search" name="q" class="form-control input-lg" placeholder="Enter Search Query..." style="width:60%; max-width:500px; margin-bottom:20px;">
+    <button type="submit" class="btn btn-lg btn-success">Search</button>
+  </form>
+</div>

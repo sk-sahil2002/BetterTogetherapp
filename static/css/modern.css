@@ -1,0 +1,112 @@
+/* Layout */
+.container, .container-fluid { max-width: 1200px; }
+
+/* Typography */
+h1, h2, h3, h4, h5 { letter-spacing: 0.2px; }
+
+/* Cards */
+.card {
+border: none;
+border-radius: 14px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+.card-header {
+background: transparent;
+border: 0;
+padding-top: 1rem;
+}
+
+/* Buttons */
+.btn-primary {
+background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+border: none;
+}
+.btn-outline-primary {
+border-color: #6366f1;
+color: #6366f1;
+}
+.btn-outline-primary:hover {
+background: #6366f1;
+color: #fff;
+}
+
+/* Forms */
+.form-control {
+border-radius: 10px;
+border-color: #e5e7eb;
+padding: 0.65rem 0.9rem;
+}
+.input-group .form-control {
+border-right: 0;
+}
+.input-group .input-group-text,
+.input-group .btn {
+border-radius: 0 10px 10px 0;
+}
+
+/* Navbar */
+.navbar {
+box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+.navbar-brand img { height: 42px; }
+
+/* Footer */
+.footer-main {
+background: linear-gradient(135deg, #0f172a, #111827);
+color: #e5e7eb;
+}
+.footer-main a { color: #c7d2fe; }
+.footer-main a:hover { color: #fff; }
+.subfooter { background: #0b1020; color: #94a3b8; }
+
+/* Campaign cards */
+.campaign-card .card-img-top {
+border-radius: 12px 12px 0 0;
+height: 220px;
+object-fit: cover;
+}
+.campaign-card .progress {
+height: 8px;
+border-radius: 6px;
+background: #e5e7eb;
+}
+.campaign-card .progress-bar {
+background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+/* Badges & tags */
+.badge {
+border-radius: 8px;
+padding: 0.4rem 0.6rem;
+font-weight: 600;
+}
+
+/* Alerts */
+.alert {
+border: 0;
+border-radius: 12px;
+box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+/* Tables */
+.table thead th {
+border-bottom-width: 1px;
+color: #6b7280;
+font-weight: 600;
+}
+
+/* Pagination */
+.pagination .page-link {
+border-radius: 8px;
+margin: 0 4px;
+}
+
+/* Utilities */
+.shadow-soft { box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important; }
+.rounded-12 { border-radius: 12px !important; }
+
+/* Responsive */
+@media (max-width: 767px) {
+.card { border-radius: 12px; }
+.navbar-collapse { background: #fa6464; border-radius: 12px; padding: 0.75rem; }
+}

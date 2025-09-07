@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="jumbotron md index-header jumbotron_set jumbotron-cover">
+  <div class="container wrap-jumbotron text-center">
+    <h1 class="title-site">Login</h1>
+    <p class="subtitle-site"><strong>BetterTogether | Crowdfunding Platform</strong></p>
+  </div>
+</div>
+
+<div class="container margin-bottom-40">
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="login-card">
+        <h2 class="text-center">Welcome back</h2>
+        <p class="text-center text-muted">Login to your account</p>
+
+        <form method="post" id="login_form" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Email -->
+          <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+              <input type="email" class="form-control" name="email"
+                     placeholder="Email" value="{{ form.email.value|default:'' }}" required>
+            </div>
+            {% if form.email.errors %}
+              <span class="help-block">
+                {% for error in form.email.errors %}
+                  {{ error }}
+                {% endfor %}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Password -->
+          <div class="form-group {% if form.password.errors %}has-error{% endif %}">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" name="password"
+                     placeholder="Password" required>
+            </div>
+            {% if form.password.errors %}
+              <span class="help-block">
+                {% for error in form.password.errors %}
+                  {{ error }}
+                {% endfor %}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="buttonSubmit" class="btn btn-lg btn-success btn-block">
+            Login
+          </button>
+
+          <div class="text-center margin-top-15">
+            <p>Don't have an account? <a href="{% url 'accounts:register' %}">Sign up</a></p>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block css %}
+<style>
+  .login-card {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px 25px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .login-card h2 {
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .login-card p.text-muted {
+    margin-bottom: 25px;
+    font-size: 14px;
+  }
+  .form-control {
+    height: 45px;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  .input-group-addon {
+    background: #f5f5f5;
+    border-radius: 6px 0 0 6px;
+    color: #555;
+  }
+  .btn-success {
+    border-radius: 30px;
+    font-weight: 600;
+    padding: 10px;
+  }
+  .help-block {
+    color: #a94442;
+    margin-top: 5px;
+  }
+  .has-error .form-control {
+    border-color: #a94442;
+  }
+</style>
+{% endblock %}
