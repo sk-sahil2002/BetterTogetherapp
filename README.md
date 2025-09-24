@@ -82,7 +82,7 @@ A modern crowdfunding platform built with Django that enables users to create an
 1. Clone the repository
 ```bash
 git clone 
-cd fundly
+cd brttertoghter
 ```
 
 2. Create a virtual environment
