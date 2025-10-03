@@ -39,7 +39,7 @@
                 <div class="form-group">
                     <label>Enter your donation</label>
                     <div class="input-group has-success">
-                        <div class="input-group-addon addon-dollar">$</div>
+                        <div class="input-group-addon addon-dollar">₹</div>
                         <input type="number" 
                                min="5" 
                                autocomplete="off" 
@@ -48,9 +48,9 @@
                                class="form-control input-lg" 
                                name="donation" 
                                value="" 
-                               placeholder="Minimum amount $5 USD">
+                               placeholder="Minimum amount ₹5 INR">
                     </div>
-                    <small class="text-muted">Minimum donation amount is $5</small>
+                    <small class="text-muted">Minimum donation amount is ₹5</small>
                 </div>
 
                 <!-- Personal Info -->
@@ -115,6 +115,25 @@
                     </select>
                 </div>
 
+                <div id="cardDetails" class="form-group" style="display:none;">
+                    <label>Card Details</label>
+                    <div class="row">
+                        <div class="col-xs-12 margin-bottom-10">
+                            <input type="text" name="card_name" class="form-control input-lg" placeholder="Name on Card">
+                        </div>
+                        <div class="col-xs-12 margin-bottom-10">
+                            <input type="text" name="card_number" inputmode="numeric" pattern="[0-9\s]{12,19}" maxlength="19" class="form-control input-lg" placeholder="Card Number">
+                        </div>
+                        <div class="col-xs-6 margin-bottom-10">
+                            <input type="text" name="card_expiry" inputmode="numeric" pattern="(0[1-9]|1[0-2])\/(\d{2})" maxlength="5" class="form-control input-lg" placeholder="MM/YY">
+                        </div>
+                        <div class="col-xs-6 margin-bottom-10">
+                            <input type="password" name="card_cvc" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" class="form-control input-lg" placeholder="CVV">
+                        </div>
+                    </div>
+                    <small class="text-muted">Payments are processed securely.</small>
+                </div>
+
                 <div class="form-group checkbox icheck">
                     <label class="margin-zero">
                         <input class="no-show" name="anonymous" type="checkbox" value="1">
@@ -142,17 +161,17 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h3 class="btn-block margin-zero" style="line-height: inherit;">
-                        <strong class="font-default">${{ total_raised|intcomma }}</strong>
-                        <small>of ${{ campaign.goal|intcomma }} goal</small>
+                        <strong class="font-default">₹{{ total_raised|intcomma }}</strong>
+                        <small>of ₹{{ campaign.goal|intcomma }} goal</small>
                     </h3>
 
                     <div class="progress margin-top-10 margin-bottom-10">
-                        <div class="progress-bar" role="progressbar" 
-                             style="width: {{ percentage }}%; line-height: 12px;"
-                             aria-valuenow="{{ percentage }}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="100" 
-                             aria-valuetext="{{ percentage }}%">
+                        <div class="progress-bar" role="progressbar"
+                             style="width: {{ percentage|default:0 }}%;"
+                             aria-valuenow="{{ percentage|default:0 }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100"
+                             aria-label="Progress: {{ percentage|default:0 }}%">
                             {{ percentage }}%
                         </div>
                     </div>
@@ -208,4 +227,19 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
+<script>
+    (function(){
+        var gateway = document.getElementById('paymentGateway');
+        var card = document.getElementById('cardDetails');
+        if (!gateway || !card) return;
+        function toggleCard(){
+            var val = gateway.value || '';
+            card.style.display = (val === 'stripe') ? 'block' : 'none';
+        }
+        gateway.addEventListener('change', toggleCard);
+        toggleCard();
+    })();
+</script>
 {% endblock %}

@@ -30,6 +30,15 @@
                                     <i class="fa fa-trash myicon-right"></i> Delete
                                 </div>
 
+                                <div class="selected-badge" style="position:absolute; top:10px; right:10px; background:#28a745; color:#fff; padding:6px 10px; border-radius:20px; font-size:12px; display:none; z-index:10;">
+                                    <i class="fa fa-check"></i> Image selected
+                                </div>
+
+                            </div>
+
+                            <div class="text-center" aria-live="polite">
+                                <small class="text-muted selected-image-label" style="display:none;">Image selected:</small>
+                                <div class="file-name selected-image-name" style="font-size:12px;"></div>
                             </div>
 
                             <div class="filer-input-inner">
@@ -63,7 +72,7 @@
                         <div class="form-group">
                             <label>Campaign Goal</label>
                             <div class="input-group">
-                                <div class="input-group-addon addon-dollar">$</div>
+                                <div class="input-group-addon addon-dollar">₹</div>
                                 <input type="number" min="1" class="form-control" name="goal" id="onlyNumber" value="" placeholder="10000">
                             </div>
                         </div>
@@ -79,7 +88,7 @@
                             <label>Campaign deadline</label>
                             <div class="input-group">
                                 <div class="input-group-addon addon-dollar"><i class="fa fa-calendar"></i></div>
-                                <input type="text" value="" id="datepicker" name="deadline" class="form-control" placeholder="Campaign deadline">
+                                <input type="date" value="" id="datepicker" name="deadline" class="form-control" placeholder="Campaign deadline">
                             </div>
                             <span class="help-block">* The minimum duration is 7 days, If you want your campaign does not have a deadline, leave blank, it can not be changed.</span>
 
@@ -119,12 +128,7 @@
     <script type="text/javascript">
 
         //Date picker
-        $('#datepicker').datepicker({
-            autoclose: true,
-            format: 'dd-mm-yyyy',
-            startDate: '+7d',
-            language: 'en'
-        });
+        // Using native date input, no JS datepicker needed
 
         $(document).ready(function () {
 
@@ -161,6 +165,10 @@
             $('#filePhoto').val('');
             $('.previewPhoto').css({backgroundImage: 'none'}).hide();
             $('.filer-input-dragDrop').removeClass('hoverClass');
+            $('.selected-image-name').text('');
+            $('.selected-image-label').hide();
+            $('.popout').removeClass('popout-error').html('Image removed').fadeIn(400).delay(1500).fadeOut();
+            $('.selected-badge').hide();
         });
 
         $("#filePhoto").on('change', function () {
@@ -168,7 +176,7 @@
             var loaded = false;
             if (window.File && window.FileReader && window.FileList && window.Blob) {
                 if ($(this).val()) { //check empty input filed
-                    oFReader = new FileReader(), rFilter = /^(?:image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/png|image)$/i;
+                    oFReader = new FileReader(), rFilter = /^(image\/gif|image\/jpeg|image\/png)$/i;
                     if ($(this)[0].files.length === 0) {
                         return
                     }
@@ -185,11 +193,11 @@
                         return false;
                     }
 
-                    let allowed_file_size = 2048 * 1024;
+                    let allowed_file_size = 5 * 1024 * 1024; // 5MB
 
                     if (fsize > allowed_file_size) {
                         $('#filePhoto').val('');
-                        $('.popout').addClass('popout-error').html("The image must be greater than or equal to: 5MB").fadeIn(500).delay(5000).fadeOut();
+                        $('.popout').addClass('popout-error').html("The image must be less than or equal to 5MB").fadeIn(500).delay(5000).fadeOut();
                         return false;
                     }
                     oFReader.onload = function (e) {
@@ -215,6 +223,10 @@
                             $('.filer-input-dragDrop').addClass('hoverClass');
                             var _filname = oFile.name;
                             var fileName = _filname.substr(0, _filname.lastIndexOf('.'));
+                            $('.selected-image-name').text(_filname);
+                            $('.selected-image-label').show();
+                            $('.popout').removeClass('popout-error').html('Image selected: ' + _filname).fadeIn(400).delay(1500).fadeOut();
+                            $('.selected-badge').show();
                         };// <<--- image.onload
                     };
 
@@ -222,7 +234,13 @@
 
                 }
             } else {
-                $('.popout').html('Can\'t upload! Your browser does not support File API! Try again with modern browsers like Chrome or Firefox.').fadeIn(500).delay(5000).fadeOut();
+                // Fallback: show file name even if preview is unavailable and toast selection
+                var legacyName = $(this).val().split('\\\\').pop();
+                $('.selected-image-name').text(legacyName);
+                $('.selected-image-label').show();
+                $('.popout').removeClass('popout-error').html('Image selected: ' + legacyName).fadeIn(400).delay(1500).fadeOut();
+                $('.popout').removeClass('popout-error').html('Preview not available. Your browser does not support File API.').fadeIn(400).delay(2000).fadeOut();
+                $('.selected-badge').show();
                 return false;
             }
         });

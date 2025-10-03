@@ -5,7 +5,7 @@
 <div class="jumbotron md index-header jumbotron_set jumbotron-cover">
     <div class="container wrap-jumbotron position-relative">
         <h1 class="title-site">My Donations</h1>
-        <p class="subtitle-site"><strong>${{ total_amount|intcomma }} raised from {{ total_donations }} donations</strong></p>
+        <p class="subtitle-site"><strong>₹{{ total_amount|intcomma }} raised from {{ total_donations }} donations</strong></p>
     </div>
 </div>
 
@@ -84,7 +84,7 @@
                                             {{ donation.fullname }}
                                         {% endif %}
                                     </td>
-                                    <td>${{ donation.donation|intcomma }}</td>
+                                    <td>₹{{ donation.donation|intcomma }}</td>
                                     <td>
                                         <span class="label label-{% if donation.approved %}success{% else %}warning{% endif %}">
                                             {{ donation.approved|yesno:"Approved,Pending" }}

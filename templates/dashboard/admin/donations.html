@@ -24,7 +24,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h6 class="card-title">Total Amount</h6>
-                        <h2>${{ total_amount|intcomma }}</h2>
+                        <h2>₹{{ total_amount|intcomma }}</h2>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h6 class="card-title">Pending Amount</h6>
-                        <h2>${{ pending_amount|intcomma }}</h2>
+                        <h2>₹{{ pending_amount|intcomma }}</h2>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h6 class="card-title">Admin Earnings</h6>
-                        <h2>${{ admin_earnings|intcomma }}</h2>
+                        <h2>₹{{ admin_earnings|intcomma }}</h2>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                                         {{ donation.campaign.title|truncatechars:20 }}
                                     </a>
                                 </td>
-                                <td>${{ donation.donation|intcomma }}</td>
+                                <td>₹{{ donation.donation|intcomma }}</td>
                                 <td>{{ donation.admin_earnings_formatted }}</td>
                                 <td>{{ donation.date|date:"d M, Y" }}</td>
                                 <td>

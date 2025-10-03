@@ -13,7 +13,11 @@
         <!-- Col MD -->
         <div class="col-md-8 margin-bottom-20">
             <div class="text-center margin-bottom-20">
-                <img class="img-responsive img-rounded" style="display: inline-block;" src="{{ campaign.image_url }}"/>
+                {% if campaign.image_url %}
+                    <img class="img-responsive img-rounded" style="display: inline-block;" src="{{ campaign.image_url }}"/>
+                {% else %}
+                    <img class="img-responsive img-rounded" style="display: inline-block;" src="https://picsum.photos/seed/{{ campaign.id }}/900/500"/>
+                {% endif %}
             </div>
 
             <h1 class="font-default title-image none-overflow margin-bottom-20">{{ campaign.title }}</h1>
@@ -86,7 +90,7 @@
                                         <div class="media-body">
                                             <h4 class="media-heading">{{ donation.name }}</h4>
                                             <span class="btn-block recent-donation-amount font-default">
-                                                ${{ donation.donation|intcomma }}
+                                                ₹{{ donation.donation|intcomma }}
                                             </span>
                                             {% if donation.comment %}
                                                 <p class="margin-bottom-5">{{ donation.comment }}</p>
@@ -111,9 +115,15 @@
                 <div class="panel-body">
                     <div class="media none-overflow">
                         <div class="media-center margin-bottom-5">
-                            <img class="img-circle center-block" 
-                                 src="{{ campaign.user.avatar_url }}" 
-                                 width="60" height="60">
+                            {% if campaign.user.avatar_url %}
+                                <img class="img-circle center-block" 
+                                     src="{{ campaign.user.avatar_url }}" 
+                                     width="60" height="60">
+                            {% else %}
+                                <img class="img-circle center-block" 
+                                     src="https://ui-avatars.com/api/?name={{ campaign.user.get_full_name|urlencode }}&background=random" 
+                                     width="60" height="60">
+                            {% endif %}
                         </div>
                         <div class="media-body text-center">
                             <h4 class="media-heading">
@@ -145,8 +155,8 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h3 class="btn-block margin-zero" style="line-height: inherit;">
-                        <strong class="font-default">${{ total_raised|intcomma }}</strong>
-                        <small>of ${{ campaign.goal|intcomma }} goal</small>
+                        <strong class="font-default">₹{{ total_raised|intcomma }}</strong>
+                        <small>of ₹{{ campaign.goal|intcomma }} goal</small>
                     </h3>
 
                     <div class="progress margin-top-10 margin-bottom-10">
@@ -185,4 +195,21 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
+<script>
+    (function(){
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('donation') === 'success' && window.Swal) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thank you for your donation! 🎉',
+                text: 'Your contribution has been received. We truly appreciate your support.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#0d6efd',
+                backdrop: true
+            });
+        }
+    })();
+    </script>
 {% endblock %}

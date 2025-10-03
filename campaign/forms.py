@@ -30,5 +30,5 @@ class DonationForm(forms.ModelForm):
     def clean_donation(self):
         amount = self.cleaned_data['donation']
         if amount < 5:
-            raise ValidationError("Amount must be greater or equal to $5")
+            raise ValidationError("Amount must be greater or equal to ₹5")
         return amount

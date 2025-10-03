@@ -27,7 +27,7 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <h6 class="text-muted">Total Earnings</h6>
-                                <h2>${{ total_earnings|intcomma }}</h2>
+                                <h2>₹{{ total_earnings|intcomma }}</h2>
                             </div>
                             <div class="icon-shape bg-primary text-white rounded-circle">
                                 <i class="fa fa-dollar-sign"></i>
@@ -148,7 +148,7 @@
         data: {
             labels: dates,
             datasets: [{
-                label: 'Amount ($)',
+                label: 'Amount (₹)',
                 data: amounts,
                 borderColor: '#28a745',
                 backgroundColor: 'rgba(40, 167, 69, 0.1)',
@@ -177,7 +177,7 @@
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return '$' + value;
+                            return '₹' + value;
                         }
                     }
                 },

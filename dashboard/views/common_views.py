@@ -25,11 +25,21 @@ class DashboardView(View):
         # Get user campaigns
         user_campaigns = Campaign.objects.filter(user=self.request.user)
         
-        # Get daily donations for last 30 days
+        # Get daily donations RECEIVED on user's campaigns for last 30 days
         daily_donations = Donation.objects.filter(
             campaign__user=self.request.user,
-            date__gte=thirty_days_ago,
-            approved=True
+            date__gte=thirty_days_ago
+        ).annotate(
+            day=TruncDay('date')
+        ).values('day').annotate(
+            total=Sum('donation'),
+            count=Count('id')
+        ).order_by('day')
+
+        # Get daily donations GIVEN by the user (by email) for last 30 days
+        daily_given = Donation.objects.filter(
+            email=self.request.user.email,
+            date__gte=thirty_days_ago
         ).annotate(
             day=TruncDay('date')
         ).values('day').annotate(
@@ -50,25 +60,33 @@ class DashboardView(View):
             d['day'].strftime('%Y-%m-%d'): {'total': d['total'], 'count': d['count']}
             for d in daily_donations
         }
+        given_dict = {
+            d['day'].strftime('%Y-%m-%d'): {'total': d['total'], 'count': d['count']}
+            for d in daily_given
+        }
 
         while current_date <= end_date:
             dates.append(current_date.strftime('%Y-%m-%d'))
             current_datetime = timezone.make_aware(
                 timezone.datetime.combine(current_date, timezone.datetime.min.time())
             )
-            day_data = donations_dict.get(current_datetime.strftime('%Y-%m-%d'), {'total': 0, 'count': 0})
-            amounts.append(float(day_data['total'] or 0))
-            counts.append(day_data['count'])
+            key = current_datetime.strftime('%Y-%m-%d')
+            day_data = donations_dict.get(key, {'total': 0, 'count': 0})
+            given_data = given_dict.get(key, {'total': 0, 'count': 0})
+            amounts.append(float(given_data['total'] or 0))
+            counts.append(given_data['count'])
             current_date += timedelta(days=1)
 
         context = {
             "active_campaigns": user_campaigns.filter(status="active").count(),
+            # Total raised on user's campaigns (received)
             "total_raised": Donation.objects.filter(
-                campaign__user=self.request.user, approved=True
+                campaign__user=self.request.user
             ).aggregate(Sum("donation"))["donation__sum"] or 0,
-            "total_donations": Donation.objects.filter(
-                campaign__user=self.request.user, approved=True
-            ).count(),
+            # My donations given (by email)
+            "my_given_total": Donation.objects.filter(email=self.request.user.email).aggregate(Sum("donation"))["donation__sum"] or 0,
+            "my_given_count": Donation.objects.filter(email=self.request.user.email).count(),
+            # Keep original dates but chart now shows given amounts
             "chart_dates": dates,
             "chart_amounts": amounts,
             "chart_counts": counts,

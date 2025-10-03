@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView, RedirectView, UpdateView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -11,6 +13,7 @@ from core.models import Country
 from .forms import *
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(CreateView):
     model = User
     form_class = UserRegistrationForm
@@ -48,6 +51,7 @@ class RegisterView(CreateView):
             return render(request, 'accounts/register.html', {'form': user_form})
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(FormView):
     success_url = '/'
     form_class = UserLoginForm

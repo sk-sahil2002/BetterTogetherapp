@@ -6,7 +6,26 @@ SECRET_KEY = '%g0w^#k4h6@au72654i++-jd&-7p@+(rikbnv227eoe+_(#h%*'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = list(filter(None, os.getenv("ALLOWED_HOSTS", "*,bettertogetherapp-production.up.railway.app").split(",")))
+
+# Trust Railway domain for CSRF (required by Django when behind proxy/CDN)
+CSRF_TRUSTED_ORIGINS = list(
+    filter(
+        None,
+        os.getenv(
+            "CSRF_TRUSTED_ORIGINS",
+            "https://bettertogetherapp-production.up.railway.app,https://*.up.railway.app",
+        ).split(","),
+    )
+)
+
+# Ensure HTTPS detection behind Railway proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Secure cookies in production
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "true").lower() == "true"
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "true").lower() == "true"
+CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "Lax")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

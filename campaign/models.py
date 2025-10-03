@@ -42,7 +42,7 @@ class Campaign(models.Model):
         return (
             self.image.url
             if self.image
-            else "https://placehold.co/600x400?text=No+Image"
+            else f"https://picsum.photos/seed/{self.id}/600/400"
         )
 
     def days_remaining(self):

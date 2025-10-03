@@ -32,7 +32,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h6 class="card-title">Total Raised</h6>
-                        <h2>${{ total_raised|intcomma }}</h2>
+                        <h2>₹{{ total_raised|intcomma }}</h2>
                     </div>
                 </div>
             </div>
@@ -66,8 +66,8 @@
                                     </a>
                                 </td>
                                 <td>{{ campaign.user.get_full_name }}</td>
-                                <td>${{ campaign.goal|intcomma }}</td>
-                                <td>${{ campaign.total_raised|default:0|intcomma }}</td>
+                                <td>₹{{ campaign.goal|intcomma }}</td>
+                                <td>₹{{ campaign.total_raised|default:0|intcomma }}</td>
                                 <td>
                                     <span class="badge bg-{{ campaign.status|yesno:'success,secondary' }}">
                                         {{ campaign.get_status_display }}

@@ -1,7 +1,9 @@
+{% load humanize %}
+{% load campaign_tags %}
 <div class="col-xs-12 col-sm-6 col-md-3 col-thumb">
     <div class="thumbnail padding-top-zero">
 
-        <a class="position-relative btn-block img-grid" href="#">
+        <a class="position-relative btn-block img-grid" href="{% url 'campaign:campaign-detail' campaign.id %}">
 
             {% if campaign.featured %}
                 <span class="box-featured" title="Featured Campaign">
@@ -9,7 +11,11 @@
                 </span>
             {% endif %}
 
-            <img title="{{ campaign.title }}" src="{{ campaign.image_url }}" class="image-url img-responsive btn-block radius-image"/>
+            {% if campaign.image_url %}
+                <img title="{{ campaign.title }}" loading="lazy" src="{{ campaign.image_url }}" class="image-url img-responsive btn-block radius-image"/>
+            {% else %}
+                <img title="{{ campaign.title }}" loading="lazy" src="https://picsum.photos/seed/{{ campaign.id }}/600/400" class="image-url img-responsive btn-block radius-image"/>
+            {% endif %}
         </a>
 
         <div class="caption">
@@ -21,9 +27,14 @@
 
             <p class="desc-campaigns">
                 {% if campaign.user %}
-                    <img src="{{ campaign.image_url }}" width="20" height="20" class="img-circle avatar-campaign"/> {{ campaign.user.username }}
+                    {% if campaign.user.avatar_url %}
+                        <img src="{{ campaign.user.avatar_url }}" width="20" height="20" class="img-circle avatar-campaign"/>
+                    {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ campaign.user.username|urlencode }}&background=random" width="20" height="20" class="img-circle avatar-campaign"/>
+                    {% endif %}
+                    {{ campaign.user.username }}
                 {% else %}
-                    <img src="" width="20" height="20" class="img-circle avatar-campaign"/> User not available
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" width="20" height="20" class="img-circle avatar-campaign"/> User not available
                 {% endif %}
             </p>
 
@@ -53,23 +64,27 @@
 
               </span>
 
+                {% with total_raised=campaign.total_raised %}
+                {% with percentage=total_raised|div:campaign.goal|mul:100|floatformat:0 %}
                 <span class="stats-campaigns">
                     <span class="pull-left">
-                        <strong>400</strong>
+                        <strong>₹{{ total_raised|intcomma }}</strong>
                         Raised
                     </span>
                     <span class="pull-right">
-                        <strong>40%</strong>
+                        <strong>{{ percentage }}%</strong>
                     </span>
                 </span>
 
                 <span class="progress">
-                    <span class="percentage" style="width: 40%" aria-valuemin="0" aria-valuemax="100" role="progressbar"></span>
+                    <span class="percentage" style="width: {{ percentage }}%" aria-valuemin="0" aria-valuemax="100" role="progressbar"></span>
                 </span>
+                {% endwith %}
+                {% endwith %}
             </p>
 
             <h6 class="margin-bottom-zero">
-                <em><strong>Goal {{ campaign.goal }}</strong></em>
+                <em><strong>Goal ₹{{ campaign.goal|intcomma }}</strong></em>
             </h6>
 
         </div><!-- /caption -->

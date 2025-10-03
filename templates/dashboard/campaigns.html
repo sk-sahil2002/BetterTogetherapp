@@ -48,11 +48,11 @@
                                                 {{ campaign.status|title }}
                                             </span>
                                         </td>
-                                        <td>${{ campaign.goal|intcomma }}</td>
-                                        <td>${{ campaign.donation_set.filter.aggregate.Sum.donation.donation__sum|default:0|intcomma }}</td>
+                                        <td>₹{{ campaign.goal|intcomma }}</td>
+                                        <td>₹{{ campaign.total_raised|intcomma }}</td>
                                         <td>
-                                            {% with total_donations=campaign.donation_set.filter.aggregate.Sum.donation.donation__sum|default:0 %}
-                                            {% with percentage=total_donations|div:campaign.goal|mul:100|floatformat:0 %}
+                                            {% with total_raised=campaign.total_raised %}
+                                            {% with percentage=total_raised|div:campaign.goal|mul:100|floatformat:0 %}
                                             <div class="progress" style="margin-bottom: 0;">
                                                 <div class="progress-bar" role="progressbar" 
                                                     style="width: {{ percentage }}%;" 

@@ -2,12 +2,15 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from django.db.models import Q, Sum
 from django.views.generic import CreateView, DetailView, ListView
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
 
 from core.models import Country
@@ -41,6 +44,7 @@ class CampaignListView(ListView):
         return context
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CampaignCreateView(CreateView):
     model = Campaign
     form_class = CampaignForm
@@ -59,7 +63,9 @@ class CampaignCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
-        self.object.status = "pending"
+        # Make campaign available immediately
+        self.object.status = "approved"
+        self.object.is_active = True
         self.object.save()
         data = {"success": True, "target": self.get_success_url()}
         return JsonResponse(data)
@@ -107,6 +113,7 @@ class CampaignDetailView(DetailView):
         return context
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class DonationView(CreateView):
     model = Donation
     template_name = "campaigns/make-donation.html"
@@ -149,23 +156,31 @@ class DonationView(CreateView):
         # Set additional fields
         donation.campaign = self.campaign
         donation.date = now()
-        donation.approved = False  # Require admin approval
+        donation.approved = True
         
-        # Set user if authenticated
-        if self.request.user.is_authenticated:
-            donation.user = self.request.user
+        # Note: Donation model does not have a FK to user; use email/fullname already set by the form.
         
         # Validate minimum donation
         if donation.donation < 5:
-            messages.error(self.request, 'Minimum donation amount is $5')
+            messages.error(self.request, 'Minimum donation amount is ₹5')
             return self.form_invalid(form)
             
         donation.save()
-        messages.success(
-            self.request, 
-            'Thank you for your donation! It will be reviewed by our team.'
-        )
-        return redirect('campaign:campaign-donation', pk=self.campaign.id)
+        # Send a thank-you email (best-effort)
+        try:
+            subject = 'Thank you for your donation to %s' % self.campaign.title
+            message = (
+                'Hi %s,\n\n'
+                'Thank you for donating ₹%s to %s. Your support means a lot!\n\n'
+                'Regards,\nBetterTogether'
+            ) % (donation.fullname, donation.donation, self.campaign.title)
+            from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None) or 'no-reply@bettertogether.local'
+            send_mail(subject, message, from_email, [donation.email], fail_silently=True)
+        except Exception:
+            pass
+
+        # Redirect with a query param to trigger success popup reliably
+        return redirect(f"{reverse_lazy('campaign:campaign-detail', kwargs={'pk': self.campaign.id})}?donation=success")
 
     def form_invalid(self, form):
         messages.error(

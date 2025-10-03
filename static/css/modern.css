@@ -1,3 +1,105 @@
+/* --- Non-invasive modern UI enhancements (responsive, no feature changes) --- */
+
+:root {
+  --bt-primary: #0d6efd;
+  --bt-success: #28a745;
+  --bt-muted: #6c757d;
+  --bt-dark: #212529;
+  --bt-light: #f8f9fa;
+  --bt-border: #e9ecef;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #fafbfc;
+  color: var(--bt-dark);
+}
+
+/* Panels/cards */
+.panel {
+  border: 1px solid var(--bt-border);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+.panel .panel-heading {
+  border-bottom: 1px solid var(--bt-border);
+  background: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.panel .panel-body { background:#fff; }
+
+/* Buttons */
+.btn-main,
+.btn.btn-primary {
+  background: linear-gradient(135deg, var(--bt-primary), #5aa1ff);
+  border: none;
+  color: #fff;
+}
+.btn-main:hover,
+.btn.btn-primary:hover {
+  filter: brightness(0.95);
+}
+.btn { border-radius: 10px; }
+
+/* Inputs */
+.form-control {
+  border-radius: 10px;
+  border-color: var(--bt-border);
+  box-shadow: none;
+}
+.input-group-addon { background:#fff; border-color: var(--bt-border); }
+
+/* Thumbnails / campaign cards */
+.thumbnail {
+  border: 1px solid var(--bt-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.thumbnail:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.img-grid .image-url {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Progress bar */
+.progress { height: 10px; border-radius: 999px; background: #eef2f6; }
+.progress .percentage, .progress-bar { background: var(--bt-success); border-radius: 999px; }
+
+/* Footer */
+.footer-main { background:#10151a; color:#cbd5e1; padding:40px 0; }
+.footer-main a.link-footer { color:#cbd5e1; }
+.footer-main a.link-footer:hover { color:#fff; text-decoration: none; }
+.subfooter { background:#0b0f14; color:#94a3b8; padding: 12px 0; }
+
+/* Jumbotron */
+.jumbotron, .jumbotron.md { color:#fff; background-position:center; background-size:cover; }
+.jumbotron-cover { background: linear-gradient(180deg, rgba(16,21,26,0.7), rgba(16,21,26,0.8)); }
+.title-site { letter-spacing:.2px; }
+
+/* Utilities */
+.shadow-custom { box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.radius-image { border-radius: 12px; }
+.margin-tp-xs { margin-top: 10px; }
+
+/* Responsive tweaks */
+@media (max-width: 991px) {
+  .img-grid .image-url { height: 180px; }
+}
+@media (max-width: 767px) {
+  .img-grid .image-url { height: 160px; }
+  .panel .panel-heading .panel-title { font-size: 15px; }
+}
+
 /* Layout */
 .container, .container-fluid { max-width: 1200px; }
 
