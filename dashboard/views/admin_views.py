@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
+from django.db import models
 from django.db.models import Sum, Count
 from django.db.models.functions import TruncDay
 from django.utils import timezone
@@ -71,6 +72,9 @@ class AdminDashboardView(SuperUserRequiredMixin, View):
             or 0,
             "total_members": User.objects.count(),
             "total_campaigns": Campaign.objects.count(),
+            "active_campaigns": Campaign.objects.filter(
+                models.Q(is_active=True) | models.Q(status__in=['approved', 'active'])
+            ).count(),
             "latest_members": latest_members,
             "recent_campaigns": recent_campaigns,
             "chart_dates": dates,
@@ -101,7 +105,9 @@ class AdminCampaignsView(SuperUserRequiredMixin, ListView):
         context.update(
             {
                 "total_campaigns": Campaign.objects.count(),
-                "active_campaigns": Campaign.objects.filter(is_active=True).count(),
+                "active_campaigns": Campaign.objects.filter(
+                    models.Q(is_active=True) | models.Q(status__in=['approved', 'active'])
+                ).count(),
                 "total_raised": Donation.objects.filter(approved=True).aggregate(
                     Sum("donation")
                 )["donation__sum"]

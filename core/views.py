@@ -1,3 +1,4 @@
+from django.db import models
 from django.db.models import Q, Sum
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, TemplateView
@@ -13,9 +14,9 @@ class HomeView(ListView):
     context_object_name = "campaigns"
     
     def get_queryset(self):
-        # Get 8 most recent active campaigns
+        # Get 8 most recent active campaigns (is_active=True OR status in ['approved', 'active'])
         return Campaign.objects.filter(
-            is_active=True
+            models.Q(is_active=True) | models.Q(status__in=['approved', 'active'])
         ).prefetch_related(
             "user"
         ).order_by(
@@ -24,7 +25,11 @@ class HomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["total_campaigns"] = Campaign.objects.filter(is_active=True).count()
+        # Count campaigns as active if they have is_active=True OR status in ['approved', 'active']
+        active_campaigns = Campaign.objects.filter(
+            models.Q(is_active=True) | models.Q(status__in=['approved', 'active'])
+        )
+        context["total_campaigns"] = active_campaigns.count()
         context["fund_raised"] = Donation.objects.filter(approved=True).aggregate(Sum("donation"))
         context["members"] = User.objects.count()
         return context

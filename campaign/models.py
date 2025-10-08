@@ -15,6 +15,8 @@ class CampaignStatusChoices(models.TextChoices):
     APPROVED = "approved", "Approved"
     REJECTED = "rejected", "Rejected"
     DELETED = "deleted", "Deleted"
+    COMPLETED = "completed", "Completed"
+    ACTIVE = "active", "Active"
 
 
 class Campaign(models.Model):
