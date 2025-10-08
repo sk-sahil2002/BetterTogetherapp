@@ -1,0 +1,24 @@
+{% load humanize %}
+{% for donation in donations %}
+    <li class="list-group-item">
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object img-circle imgDonations" 
+                     src="{{ donation.avatar }}" 
+                     width="40" height="40">
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">{{ donation.name }}</h4>
+                <span class="btn-block recent-donation-amount font-default">
+                    ₹{{ donation.donation|intcomma }}
+                </span>
+                {% if donation.comment %}
+                    <p class="margin-bottom-5">{{ donation.comment }}</p>
+                {% endif %}
+                <small class="btn-block timeAgo text-muted">
+                    {{ donation.date|date }}
+                </small>
+            </div>
+        </div>
+    </li>
+{% endfor %}

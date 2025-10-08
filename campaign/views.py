@@ -5,13 +5,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from django.db.models import Q, Sum
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, View
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
+from django.template.loader import render_to_string
 
 from core.models import Country
 from .forms import *
@@ -199,3 +200,41 @@ class DonationView(CreateView):
                 'country': self.request.user.country.name if hasattr(self.request.user, 'country') and hasattr(self.request.user.country, 'name') else None
             }
         return kwargs
+
+
+class LoadMoreDonationsView(View):
+    """AJAX view to load more donations for a campaign"""
+    
+    def get(self, request, pk):
+        try:
+            campaign = get_object_or_404(Campaign, id=pk)
+            offset = int(request.GET.get('offset', 0))
+            limit = int(request.GET.get('limit', 10))
+            
+            # Get donations with offset and limit
+            donations = campaign.donation_set.filter(
+                approved=True
+            ).order_by('-date', '-id')[offset:offset + limit]
+            
+            # Render the donation items as HTML
+            donation_html = render_to_string('campaigns/partials/donation_item.html', {
+                'donations': donations
+            })
+            
+            # Check if there are more donations
+            total_donations = campaign.donation_set.filter(approved=True).count()
+            has_more = (offset + limit) < total_donations
+            
+            return JsonResponse({
+                'success': True,
+                'html': donation_html,
+                'has_more': has_more,
+                'next_offset': offset + limit,
+                'total_donations': total_donations
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })

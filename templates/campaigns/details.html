@@ -103,6 +103,18 @@
                                 </li>
                             {% endfor %}
                         </ul>
+                        
+                        <!-- Load More Button -->
+                        {% if donations|length >= 10 %}
+                            <div class="text-center margin-top-20" id="loadMoreContainer">
+                                <button type="button" class="btn btn-primary" id="loadMoreDonations" 
+                                        data-campaign-id="{{ campaign.id }}" 
+                                        data-offset="10" 
+                                        data-limit="10">
+                                    <i class="fa fa-refresh"></i> Load More Donations
+                                </button>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -211,5 +223,55 @@
             });
         }
     })();
+
+    // Load More Donations functionality
+    $(document).ready(function() {
+        $('#loadMoreDonations').on('click', function() {
+            var button = $(this);
+            var campaignId = button.data('campaign-id');
+            var offset = button.data('offset');
+            var limit = button.data('limit');
+            
+            // Disable button and show loading
+            button.prop('disabled', true);
+            button.html('<i class="fa fa-spinner fa-spin"></i> Loading...');
+            
+            $.ajax({
+                url: '/campaign/' + campaignId + '/donations/load-more/',
+                type: 'GET',
+                data: {
+                    'offset': offset,
+                    'limit': limit
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Append new donations to the list
+                        $('#listDonations').append(response.html);
+                        
+                        // Update offset for next load
+                        button.data('offset', response.next_offset);
+                        
+                        // Hide button if no more donations
+                        if (!response.has_more) {
+                            $('#loadMoreContainer').hide();
+                        } else {
+                            // Re-enable button
+                            button.prop('disabled', false);
+                            button.html('<i class="fa fa-refresh"></i> Load More Donations');
+                        }
+                    } else {
+                        alert('Error loading donations: ' + response.error);
+                        button.prop('disabled', false);
+                        button.html('<i class="fa fa-refresh"></i> Load More Donations');
+                    }
+                },
+                error: function() {
+                    alert('Error loading donations. Please try again.');
+                    button.prop('disabled', false);
+                    button.html('<i class="fa fa-refresh"></i> Load More Donations');
+                }
+            });
+        });
+    });
     </script>
 {% endblock %}

@@ -13,8 +13,10 @@ class HomeView(ListView):
     context_object_name = "campaigns"
     
     def get_queryset(self):
-        # Get 6 most recent active campaigns
-        return Campaign.objects.prefetch_related(
+        # Get 8 most recent active campaigns
+        return Campaign.objects.filter(
+            is_active=True
+        ).prefetch_related(
             "user"
         ).order_by(
             '-date'
@@ -22,7 +24,7 @@ class HomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["total_campaigns"] = Campaign.objects.filter(status="pending").count()
+        context["total_campaigns"] = Campaign.objects.filter(is_active=True).count()
         context["fund_raised"] = Donation.objects.filter(approved=True).aggregate(Sum("donation"))
         context["members"] = User.objects.count()
         return context

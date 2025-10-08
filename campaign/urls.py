@@ -9,4 +9,5 @@ urlpatterns = [
     path('details/<uuid:pk>', CampaignDetailView.as_view(), name='campaign-detail'),
     path('<uuid:pk>/donation', DonationView.as_view(), name='campaign-donation'),
     path('campaigns/', CampaignListView.as_view(), name='campaign-list'),
+    path('<uuid:pk>/donations/load-more', LoadMoreDonationsView.as_view(), name='load-more-donations'),
 ]
