@@ -85,7 +85,6 @@ class DashboardView(View):
         ).order_by('-donation__date', '-donation__id')[:6]
 
         context = {
-            "active_campaigns": user_campaigns.filter(status="active").count(),
             # Total raised on user's campaigns (received)
             "total_raised": Donation.objects.filter(
                 campaign__user=self.request.user
