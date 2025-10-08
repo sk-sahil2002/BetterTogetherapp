@@ -82,7 +82,7 @@ class DashboardView(View):
             donation__email=self.request.user.email
         ).distinct().select_related('user').prefetch_related(
             'donation_set'
-        ).order_by('-donation__date')[:6]
+        ).order_by('-donation__created_at')[:6]
 
         context = {
             "active_campaigns": user_campaigns.filter(status="active").count(),
@@ -137,7 +137,7 @@ class DonationListView(ListView):
             campaign__user=self.request.user
         ).select_related(
             'campaign'
-        ).order_by('-date', '-id')
+        ).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

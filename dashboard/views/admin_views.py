@@ -118,7 +118,7 @@ class AdminDonationsView(SuperUserRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Donation.objects.select_related("campaign").order_by("-date", "-id")
+        return Donation.objects.select_related("campaign").order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

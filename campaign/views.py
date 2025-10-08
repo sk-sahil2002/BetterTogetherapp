@@ -107,7 +107,7 @@ class CampaignDetailView(DetailView):
             'total_raised': total_raised,
             'total_donors': total_donors,
             'progress_percentage': min(100, progress_percentage),  # Cap at 100%
-            'donations': donations.order_by('-date', '-id')[:10],  # Get latest 10 donations, with id as tiebreaker
+            'donations': donations.order_by('-created_at')[:10],  # Get latest 10 donations by creation time
             'share_url': self.request.build_absolute_uri(),  # Full URL for sharing
         })
         return context
@@ -145,7 +145,7 @@ class DonationView(CreateView):
             'total_donors': total_donors,
             'progress_percentage': min(100, progress_percentage),
             'min_donation': 5,  # Minimum donation amount
-            'recent_donations': donations.order_by('-date', '-id')[:5],
+            'recent_donations': donations.order_by('-created_at')[:5],
             "percentage": int(progress_percentage),
         })
         return context
@@ -155,7 +155,8 @@ class DonationView(CreateView):
         
         # Set additional fields
         donation.campaign = self.campaign
-        donation.date = now()
+        donation.date = now().date()  # Use date() to get only the date part
+        donation.created_at = now()  # Set creation timestamp
         donation.approved = True
         
         # Note: Donation model does not have a FK to user; use email/fullname already set by the form.

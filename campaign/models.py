@@ -104,6 +104,7 @@ class Donation(models.Model):
     approved = models.BooleanField(default=False)
     comment = models.TextField(blank=True, null=True)
     date = models.DateField()
+    created_at = models.DateTimeField(default=now, blank=True)
 
     def __str__(self):
         return "{} donate {}".format(self.fullname, self.donation)
