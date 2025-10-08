@@ -107,7 +107,7 @@ class CampaignDetailView(DetailView):
             'total_raised': total_raised,
             'total_donors': total_donors,
             'progress_percentage': min(100, progress_percentage),  # Cap at 100%
-            'donations': donations.order_by('-date')[:10],  # Get latest 10 donations
+            'donations': donations.order_by('-date', '-id')[:10],  # Get latest 10 donations, with id as tiebreaker
             'share_url': self.request.build_absolute_uri(),  # Full URL for sharing
         })
         return context
@@ -145,7 +145,7 @@ class DonationView(CreateView):
             'total_donors': total_donors,
             'progress_percentage': min(100, progress_percentage),
             'min_donation': 5,  # Minimum donation amount
-            'recent_donations': donations.order_by('-date')[:5],
+            'recent_donations': donations.order_by('-date', '-id')[:5],
             "percentage": int(progress_percentage),
         })
         return context

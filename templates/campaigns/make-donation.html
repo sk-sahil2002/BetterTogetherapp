@@ -117,21 +117,38 @@
 
                 <div id="cardDetails" class="form-group" style="display:none;">
                     <label>Card Details</label>
-                    <div class="row">
-                        <div class="col-xs-12 margin-bottom-10">
-                            <input type="text" name="card_name" class="form-control input-lg" placeholder="Name on Card">
-                        </div>
-                        <div class="col-xs-12 margin-bottom-10">
-                            <input type="text" name="card_number" inputmode="numeric" pattern="[0-9\s]{12,19}" maxlength="19" class="form-control input-lg" placeholder="Card Number">
-                        </div>
-                        <div class="col-xs-6 margin-bottom-10">
-                            <input type="text" name="card_expiry" inputmode="numeric" pattern="(0[1-9]|1[0-2])\/(\d{2})" maxlength="5" class="form-control input-lg" placeholder="MM/YY">
-                        </div>
-                        <div class="col-xs-6 margin-bottom-10">
-                            <input type="password" name="card_cvc" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" class="form-control input-lg" placeholder="CVV">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-12 margin-bottom-15">
+                                    <label class="control-label">Name on Card</label>
+                                    <input type="text" name="card_name" class="form-control input-lg" placeholder="Full Name" required>
+                                </div>
+                                <div class="col-xs-12 margin-bottom-15">
+                                    <label class="control-label">Card Number</label>
+                                    <input type="text" name="card_number" id="cardNumber" inputmode="numeric" pattern="[0-9\s]{12,19}" maxlength="19" class="form-control input-lg" placeholder="1234 5678 9012 3456" required>
+                                    <small class="text-muted">Enter 16-digit card number</small>
+                                </div>
+                                <div class="col-xs-6 margin-bottom-15">
+                                    <label class="control-label">Expiry Date</label>
+                                    <input type="text" name="card_expiry" id="cardExpiry" inputmode="numeric" pattern="(0[1-9]|1[0-2])\/(\d{2})" maxlength="5" class="form-control input-lg" placeholder="MM/YY" required>
+                                    <small class="text-muted">MM/YY format</small>
+                                </div>
+                                <div class="col-xs-6 margin-bottom-15">
+                                    <label class="control-label">CVV</label>
+                                    <input type="password" name="card_cvc" id="cardCvc" inputmode="numeric" pattern="[0-9]{3,4}" maxlength="4" class="form-control input-lg" placeholder="123" required>
+                                    <small class="text-muted">3-4 digits</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-lock"></i> Your payment information is encrypted and secure.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <small class="text-muted">Payments are processed securely.</small>
                 </div>
 
                 <div class="form-group checkbox icheck">
@@ -234,12 +251,45 @@
         var gateway = document.getElementById('paymentGateway');
         var card = document.getElementById('cardDetails');
         if (!gateway || !card) return;
+        
         function toggleCard(){
             var val = gateway.value || '';
             card.style.display = (val === 'stripe') ? 'block' : 'none';
         }
         gateway.addEventListener('change', toggleCard);
         toggleCard();
+
+        // Card number formatting
+        var cardNumber = document.getElementById('cardNumber');
+        if (cardNumber) {
+            cardNumber.addEventListener('input', function(e) {
+                var value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                if (formattedValue !== e.target.value) {
+                    e.target.value = formattedValue;
+                }
+            });
+        }
+
+        // Expiry date formatting
+        var cardExpiry = document.getElementById('cardExpiry');
+        if (cardExpiry) {
+            cardExpiry.addEventListener('input', function(e) {
+                var value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+        }
+
+        // CVV formatting
+        var cardCvc = document.getElementById('cardCvc');
+        if (cardCvc) {
+            cardCvc.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        }
     })();
 </script>
 {% endblock %}

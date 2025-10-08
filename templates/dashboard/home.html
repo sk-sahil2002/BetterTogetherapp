@@ -83,6 +83,73 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Campaigns I've Donated To -->
+                {% if donated_campaigns %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Campaigns I've Donated To</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    {% for campaign in donated_campaigns %}
+                                    <div class="col-md-6 margin-bottom-20">
+                                        <div class="panel panel-default campaign-card">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-xs-4">
+                                                        <img src="{{ campaign.image.url }}" 
+                                                             alt="{{ campaign.title }}" 
+                                                             class="img-responsive img-rounded" 
+                                                             style="width: 100%; height: 80px; object-fit: cover;">
+                                                    </div>
+                                                    <div class="col-xs-8">
+                                                        <h4 class="margin-zero">
+                                                            <a href="{% url 'campaign:campaign-detail' campaign.id %}" 
+                                                               class="text-decoration-none">
+                                                                {{ campaign.title|truncatechars:30 }}
+                                                            </a>
+                                                        </h4>
+                                                        <p class="text-muted small margin-bottom-5">
+                                                            by {{ campaign.user.get_full_name }}
+                                                        </p>
+                                                        <div class="progress margin-bottom-5" style="height: 6px;">
+                                                            <div class="progress-bar" 
+                                                                 style="width: {{ campaign|progress_percentage }}%"></div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-6">
+                                                                <small class="text-muted">
+                                                                    ₹{{ campaign|total_raised|intcomma }} raised
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-xs-6 text-right">
+                                                                <small class="text-muted">
+                                                                    {{ campaign|progress_percentage }}% funded
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if donated_campaigns|length >= 6 %}
+                                <div class="text-center">
+                                    <a href="{% url 'dashboard:donations' %}" class="btn btn-default">
+                                        View All My Donations
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
