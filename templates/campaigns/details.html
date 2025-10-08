@@ -110,10 +110,15 @@
                                 <button type="button" class="btn btn-primary" id="loadMoreDonations" 
                                         data-campaign-id="{{ campaign.id }}" 
                                         data-offset="10" 
-                                        data-limit="10">
+                                        data-limit="10"
+                                        data-url="{% url 'campaign:load-more-donations' pk=campaign.id %}">
                                     <i class="fa fa-refresh"></i> Load More Donations
                                 </button>
+                                <!-- Debug info -->
+                                <small class="text-muted">(Showing {{ donations|length }} donations)</small>
                             </div>
+                        {% else %}
+                            <!-- Debug: Button not shown because donations count is {{ donations|length }} -->
                         {% endif %}
                     {% endif %}
                 </div>
@@ -231,13 +236,16 @@
             var campaignId = button.data('campaign-id');
             var offset = button.data('offset');
             var limit = button.data('limit');
+            var url = button.data('url');
+            
+            console.log('Load more clicked:', {campaignId, offset, limit, url});
             
             // Disable button and show loading
             button.prop('disabled', true);
             button.html('<i class="fa fa-spinner fa-spin"></i> Loading...');
             
             $.ajax({
-                url: '/campaign/' + campaignId + '/donations/load-more/',
+                url: url,
                 type: 'GET',
                 data: {
                     'offset': offset,
@@ -260,13 +268,15 @@
                             button.html('<i class="fa fa-refresh"></i> Load More Donations');
                         }
                     } else {
+                        console.error('Load more donations error:', response);
                         alert('Error loading donations: ' + response.error);
                         button.prop('disabled', false);
                         button.html('<i class="fa fa-refresh"></i> Load More Donations');
                     }
                 },
-                error: function() {
-                    alert('Error loading donations. Please try again.');
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', xhr.responseText);
+                    alert('Error loading donations. Please try again. Status: ' + status);
                     button.prop('disabled', false);
                     button.html('<i class="fa fa-refresh"></i> Load More Donations');
                 }

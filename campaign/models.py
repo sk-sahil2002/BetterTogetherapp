@@ -109,7 +109,7 @@ class Donation(models.Model):
 
     @property
     def name(self):
-        return self.fullname if self.anonymous == 0 else "Anonymous"
+        return "Anonymous" if self.anonymous else self.fullname
 
     @property
     def avatar(self):
@@ -129,7 +129,7 @@ class Donation(models.Model):
             url = "{base}avatar/{hash}.jpg?{qs}".format(
                 base=url_base, hash=email_hash, qs=query_string
             )
-            return default if self.anonymous == 0 else url
+            return default if self.anonymous else url
         except (ValueError, AttributeError):
             return static("img/default.jpg")
 

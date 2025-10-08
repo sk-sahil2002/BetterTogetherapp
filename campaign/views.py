@@ -202,6 +202,7 @@ class DonationView(CreateView):
         return kwargs
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoadMoreDonationsView(View):
     """AJAX view to load more donations for a campaign"""
     
@@ -230,11 +231,19 @@ class LoadMoreDonationsView(View):
                 'html': donation_html,
                 'has_more': has_more,
                 'next_offset': offset + limit,
-                'total_donations': total_donations
+                'total_donations': total_donations,
+                'debug': {
+                    'offset': offset,
+                    'limit': limit,
+                    'donations_count': donations.count(),
+                    'total_donations': total_donations
+                }
             })
             
         except Exception as e:
+            import traceback
             return JsonResponse({
                 'success': False,
-                'error': str(e)
+                'error': str(e),
+                'traceback': traceback.format_exc()
             })
