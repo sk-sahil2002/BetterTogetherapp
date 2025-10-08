@@ -80,7 +80,9 @@ class DashboardView(View):
         # Get campaigns the user has donated to
         donated_campaigns = Campaign.objects.filter(
             donation__email=self.request.user.email
-        ).distinct().select_related('user').prefetch_related('donation_set').order_by('-donation__date')[:6]
+        ).distinct().select_related('user').prefetch_related(
+            'donation_set'
+        ).order_by('-donation__date')[:6]
 
         context = {
             "active_campaigns": user_campaigns.filter(status="active").count(),

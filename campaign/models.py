@@ -39,11 +39,14 @@ class Campaign(models.Model):
         return self.title
 
     def image_url(self):
-        return (
-            self.image.url
-            if self.image
-            else f"https://picsum.photos/seed/{self.id}/600/400"
-        )
+        try:
+            return (
+                self.image.url
+                if self.image
+                else f"https://picsum.photos/seed/{self.id}/600/400"
+            )
+        except (ValueError, AttributeError):
+            return f"https://picsum.photos/seed/{self.id}/600/400"
 
     def days_remaining(self):
         delta = self.deadline - datetime.now().date()
@@ -111,22 +114,25 @@ class Donation(models.Model):
 
     @property
     def avatar(self):
-        default = static("img/default.jpg")
-        size = 40
-        query_string = urlencode(
-            {
-                "s": str(size),
-            }
-        )
+        try:
+            default = static("img/default.jpg")
+            size = 40
+            query_string = urlencode(
+                {
+                    "s": str(size),
+                }
+            )
 
-        url_base = "https://www.gravatar.com/"
-        email_hash = hashlib.md5(self.email.strip().lower().encode("utf-8")).hexdigest()
+            url_base = "https://www.gravatar.com/"
+            email_hash = hashlib.md5(self.email.strip().lower().encode("utf-8")).hexdigest()
 
-        # Build url
-        url = "{base}avatar/{hash}.jpg?{qs}".format(
-            base=url_base, hash=email_hash, qs=query_string
-        )
-        return default if self.anonymous == 0 else url
+            # Build url
+            url = "{base}avatar/{hash}.jpg?{qs}".format(
+                base=url_base, hash=email_hash, qs=query_string
+            )
+            return default if self.anonymous == 0 else url
+        except (ValueError, AttributeError):
+            return static("img/default.jpg")
 
     @property
     def admin_earnings(self):

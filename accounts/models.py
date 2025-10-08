@@ -33,4 +33,7 @@ class User(AbstractUser):
     
     @property
     def avatar_url(self):
-        return self.avatar.url if self.avatar else "https://placehold.co/400x400?text=No+Image"
+        try:
+            return self.avatar.url if self.avatar else "https://placehold.co/400x400?text=No+Image"
+        except (ValueError, AttributeError):
+            return "https://placehold.co/400x400?text=No+Image"

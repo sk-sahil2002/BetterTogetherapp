@@ -10,6 +10,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from core.models import Country
+from .models import User
 from .forms import *
 
 
