@@ -33,7 +33,7 @@
                         {{ field }}
                         {% if field.name == 'image' and category.image %}
                         <div class="mt-2">
-                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" style="max-width: 70px;">
+                            <img src="{{ category.category_image }}" alt="{{ category.name }}" class="img-fluid" style="max-width: 70px;">
                         </div>
                         {% endif %}
                         {% if field.errors %}

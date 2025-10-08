@@ -166,3 +166,30 @@ class DonationOrderingTestCase(TestCase):
         # Most recent donation should be first
         self.assertEqual(donations[0], donation2)
         self.assertEqual(donations[1], donation1)
+    
+    def test_campaign_image_url_without_image(self):
+        """Test that campaign.image_url() works when image is None or empty"""
+        # Test with no image
+        campaign_no_image = Campaign.objects.create(
+            title='Test Campaign No Image',
+            description='Test Description',
+            user=self.user,
+            category=self.category,
+            goal=1000,
+            location='Test Location',
+            deadline=timezone.now().date() + timedelta(days=30),
+            # No image field set
+        )
+        
+        # Should return placeholder image URL
+        image_url = campaign_no_image.image_url()
+        self.assertTrue(image_url.startswith('https://picsum.photos/seed/'))
+        self.assertIn(str(campaign_no_image.id), image_url)
+    
+    def test_campaign_image_url_with_image(self):
+        """Test that campaign.image_url() works when image exists"""
+        # This test assumes the campaign has an image
+        # The image_url method should return the actual image URL or placeholder
+        image_url = self.campaign.image_url()
+        self.assertIsInstance(image_url, str)
+        self.assertTrue(len(image_url) > 0)

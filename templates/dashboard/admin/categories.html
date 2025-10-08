@@ -38,7 +38,7 @@
                                 <td>{{ category.campaign_count }}</td>
                                 <td>
                                     {% if category.image %}
-                                        <img src="{{ category.image.url }}" alt="{{ category.name }}" class="img-fluid" style="max-width: 60px;">
+                                        <img src="{{ category.category_image }}" alt="{{ category.name }}" class="img-fluid" style="max-width: 60px;">
                                     {% else %}
                                         <span class="text-muted">No image</span>
                                     {% endif %}

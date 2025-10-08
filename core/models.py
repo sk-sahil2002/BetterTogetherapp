@@ -21,6 +21,10 @@ class Category(models.Model):
 
     @property
     def category_image(self):
-        if self.image:
-            return self.image.url
-        return "/media/categories/default.png"
+        try:
+            if self.image and hasattr(self.image, 'url'):
+                return self.image.url
+            else:
+                return "/media/categories/default.png"
+        except (ValueError, AttributeError):
+            return "/media/categories/default.png"

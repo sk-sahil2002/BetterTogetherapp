@@ -40,11 +40,10 @@ class Campaign(models.Model):
 
     def image_url(self):
         try:
-            return (
-                self.image.url
-                if self.image
-                else f"https://picsum.photos/seed/{self.id}/600/400"
-            )
+            if self.image and hasattr(self.image, 'url'):
+                return self.image.url
+            else:
+                return f"https://picsum.photos/seed/{self.id}/600/400"
         except (ValueError, AttributeError):
             return f"https://picsum.photos/seed/{self.id}/600/400"
 
